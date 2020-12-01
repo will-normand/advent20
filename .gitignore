@@ -1,0 +1,3 @@
+target/
+.bsp
+src/main/resources/input*
