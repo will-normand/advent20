@@ -4,28 +4,34 @@ import scala.io.Source
 
 object Day01 extends App {
 
-  val expenses = getInput("input01.txt").zipWithIndex
+  val expenses = getInput("input01.txt")
 
-  def productsOfTwo =
+  def productsOfTwo(indexedExpenses: List[(Int, Int)]) =
     for {
-      (x, xi) <- expenses
-      (y, yi) <- expenses
+      (x, xi) <- indexedExpenses
+      (y, yi) <- indexedExpenses
       if xi != yi
       if (x + y) == 2020
     } yield x * y
 
-  println("Answer (part 1): " + productsOfTwo.head)
+  println("Answer (part 1): " + productsOfTwo(expenses.zipWithIndex).head)
 
-  def productsOfThree =
+  def productsOfThree(indexedExpenses: List[(Int, Int)]) =
     for {
-      (x, xi) <- expenses
-      (y, yi) <- expenses
-      (z, zi) <- expenses
+      (x, xi) <- indexedExpenses
+      (y, yi) <- indexedExpenses
+      (z, zi) <- indexedExpenses
       if (x + y + z) == 2020
       if Set(xi, yi, zi).size == 3
     } yield x * y * z
 
-  println("Answer (part 2): " + productsOfThree.head)
+  println("Answer (part 2): " + productsOfThree(expenses.zipWithIndex).head)
+
+  def productsOfN(n: Int, expenses: List[Int]) =
+    expenses.combinations(n).filter(_.sum == 2020).toList.head.product
+
+  println("Answer (part 1) from combinations: " + productsOfN(2, expenses))
+  println("Answer (part 2) from combinations: " + productsOfN(3, expenses))
 
   private def getInput(filename: String) = readFile(filename) map { _.toInt }
 
