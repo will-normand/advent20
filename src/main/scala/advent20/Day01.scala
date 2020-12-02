@@ -1,10 +1,10 @@
 package advent20
 
-import scala.io.Source
+import advent20.utils.InputFileReader
 
 object Day01 extends App {
 
-  val expenses = getInput("input01.txt")
+  val expenses = getInput("input01")
 
   def productsOfTwo(indexedExpenses: List[(Int, Int)]) =
     for {
@@ -33,12 +33,6 @@ object Day01 extends App {
   println("Answer (part 1) from combinations: " + productsOfN(2, expenses))
   println("Answer (part 2) from combinations: " + productsOfN(3, expenses))
 
-  private def getInput(filename: String) = readFile(filename) map { _.toInt }
-
-  private def readFile(filename: String): List[String] = {
-    val source = Source.fromResource(filename)
-    val lines = source.getLines().toList
-    source.close()
-    lines
-  }
+  private def getInput(filename: String) =
+    new InputFileReader(filename).getLines map (_.toInt)
 }
