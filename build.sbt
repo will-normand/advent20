@@ -10,3 +10,5 @@ lazy val root = (project in file("."))
     name := "advent20",
     libraryDependencies += scalaTest % Test
   )
+
+libraryDependencies += "org.scalactic" %% "scalactic" % "3.2.2"
