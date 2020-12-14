@@ -12,3 +12,4 @@ lazy val root = (project in file("."))
   )
 
 libraryDependencies += "org.scalactic" %% "scalactic" % "3.2.2"
+libraryDependencies += "org.scala-lang.modules" %% "scala-parallel-collections" % "1.0.0"
