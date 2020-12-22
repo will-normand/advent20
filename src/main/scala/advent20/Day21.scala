@@ -16,7 +16,11 @@ object Day21 extends App {
   val cantPossibly = allIngredients -- possibleIngredients
   val answer1 = cantPossibly.toList.map(countIngredients(_, foods)).sum
   println("Answer (part 1) " + answer1)
-  
+
+  val iAllergies = ingredientAllergies(possibilities)
+  val answer2 = iAllergies.sortBy(_._2.name).map(_._1.name).mkString(",")
+  println("Answer (part 2) " + answer2)
+
   def allergenMaps(foods: List[Food]): Map[Allergen, List[Set[Ingredient]]] = {
     val allergensList = for (food <- foods; allergen <- food.allergens) yield allergen -> food.ingredients
     val allergens: mutable.Map[Allergen, List[Set[Ingredient]]] = mutable.Map.empty
@@ -33,6 +37,18 @@ object Day21 extends App {
   def countIngredients(ingredient: Ingredient, foods: List[Food]): Int = {
     val allIngredients = foods.flatMap(_.ingredients)
     allIngredients.count(_ == ingredient)
+  }
+
+  def ingredientAllergies(possibilities: Map[Allergen, Set[Ingredient]]): List[(Ingredient, Allergen)] = {
+    val singles = possibilities.filter(_._2.size == 1)
+
+    if (possibilities.isEmpty) List.empty
+    else {
+      val newAllergies = singles map { case (a, iSingle) => (iSingle.head, a) }
+      val possibilitiesWithoutSingles = possibilities map { case (a, is) => a -> (is -- newAllergies.keySet) }
+      val possibilitiesWithoutAllergens = possibilitiesWithoutSingles.removedAll(newAllergies.values)
+      newAllergies.toList ++ ingredientAllergies(possibilitiesWithoutAllergens)
+    }
   }
 }
 
