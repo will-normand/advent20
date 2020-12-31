@@ -66,7 +66,9 @@ object Day23 extends App {
 
     val cupRing = Cup.createCups(cupLabels)
     val cups = Cups(cupRing)
-    for (_ <- 1 to 100) { cups.move() }
+    for (_ <- 1 to 100) {
+      cups.move()
+    }
     result(cups)
   }
 
@@ -82,7 +84,9 @@ object Day23 extends App {
 
     val cupRing = Cup.createCupsPadded(cupLabels, 1000000)
     val cups = Cups(cupRing)
-    for (_ <- 1 to 10000000) { cups.move() }
+    for (_ <- 1 to 10000000) {
+      cups.move()
+    }
     result(cups)
   }
 }
@@ -94,13 +98,11 @@ class Cups(var current: Cup, lookupTable: Map[Int, Cup], minLabel: Int, maxLabel
     val movingFirst = current.next
     val movingLast = current.next3
     current.next = movingLast.next
-    movingLast.next = null
-    val movingLabels = Set(current.label, movingFirst.label, movingFirst.next.label, movingLast.label)
-    var nextLabel = decrementLabel(current.label)
-    while (movingLabels.contains(nextLabel)) {
-      nextLabel = decrementLabel(nextLabel)
-    }
+
+    val invalidNextCupLabels = Set(current.label, movingFirst.label, movingFirst.next.label, movingLast.label)
+    val nextLabel = findNextCup(invalidNextCupLabels)
     val nextCup = lookup(nextLabel)
+
     val afterInsert = nextCup.next
     nextCup.next = movingFirst
     movingLast.next = afterInsert
@@ -117,6 +119,12 @@ class Cups(var current: Cup, lookupTable: Map[Int, Cup], minLabel: Int, maxLabel
       cup = cup.next
     }
     labels.map(_.toString).mkString
+  }
+
+  private def findNextCup(movingLabels: Set[Int]): Int = {
+    var nextLabel = decrementLabel(current.label)
+    while (movingLabels.contains(nextLabel)) nextLabel = decrementLabel(nextLabel)
+    nextLabel
   }
 
   private def decrementLabel(label: Int): Int = if (label - 1 < minLabel) maxLabel else label - 1
@@ -141,6 +149,7 @@ object Cups {
 
 case class Cup(label: Int, var next: Cup) {
   def next3: Cup = next.next.next
+
   override def toString: String = s"Cup($label, next=${next.label})"
 }
 
