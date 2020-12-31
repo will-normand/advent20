@@ -18,7 +18,7 @@ object Day23 extends App {
     var index = 0
     val lowestLabel = cups.min
     val highestLabel = cups.max
-    for (round <- 1 to rounds) {
+    for (_ <- 1 to rounds) {
       val currentLabel = cups(index)
       val removed = removeThree(cups, index)
       val destination = destinationCupIndex(cups, currentLabel - 1)
@@ -74,8 +74,8 @@ object Day23 extends App {
     def result(cups: Cups): BigInt = {
       val oneCup = cups.lookup(1)
 
-      val nextCup = BigInt(oneCup.next.get.label)
-      val nextNextCup = BigInt(oneCup.next.get.next.get.label)
+      val nextCup = BigInt(oneCup.next.label)
+      val nextNextCup = BigInt(oneCup.next.next.label)
       val result: BigInt = nextCup * nextNextCup
       result
     }
@@ -91,30 +91,30 @@ class Cups(var current: Cup, lookupTable: Map[Int, Cup], minLabel: Int, maxLabel
   def lookup(label: Int): Cup = lookupTable(label)
 
   def move(): Unit = {
-    val movingFirst = current.next.get
+    val movingFirst = current.next
     val movingLast = current.next3
     current.next = movingLast.next
-    movingLast.next = None
-    val movingLabels = Set(current.label, movingFirst.label, movingFirst.next.get.label, movingLast.label)
+    movingLast.next = null
+    val movingLabels = Set(current.label, movingFirst.label, movingFirst.next.label, movingLast.label)
     var nextLabel = decrementLabel(current.label)
     while (movingLabels.contains(nextLabel)) {
       nextLabel = decrementLabel(nextLabel)
     }
     val nextCup = lookup(nextLabel)
-    val afterInsert = nextCup.next.get
-    nextCup.next = Some(movingFirst)
-    movingLast.next = Some(afterInsert)
-    current = current.next.get
+    val afterInsert = nextCup.next
+    nextCup.next = movingFirst
+    movingLast.next = afterInsert
+    current = current.next
   }
 
   def labelsFromOne: String = {
     val oneCup = lookup(1)
-    var cup = oneCup.next.get
+    var cup = oneCup.next
 
     val labels: ListBuffer[Int] = ListBuffer.empty
     while (cup != oneCup) {
       labels append cup.label
-      cup = cup.next.get
+      cup = cup.next
     }
     labels.map(_.toString).mkString
   }
@@ -125,23 +125,23 @@ class Cups(var current: Cup, lookupTable: Map[Int, Cup], minLabel: Int, maxLabel
 object Cups {
   def apply(current: Cup): Cups = {
     var lookup: Map[Int, Cup] = Map(current.label -> current)
-    var cup = current.next.get
+    var cup = current.next
     var minLabel = Int.MaxValue
     var maxLabel = 0
     while (cup != current) {
       lookup = lookup + (cup.label -> cup)
       if (cup.label < minLabel) minLabel = cup.label
       if (cup.label > maxLabel) maxLabel = cup.label
-      cup = cup.next.get
+      cup = cup.next
     }
 
     new Cups(current, lookup, minLabel, maxLabel)
   }
 }
 
-case class Cup(label: Int, var next: Option[Cup]) {
-  def next3: Cup = next.get.next.get.next.get
-  override def toString: String = s"Cup($label, next=${next.get.label})"
+case class Cup(label: Int, var next: Cup) {
+  def next3: Cup = next.next.next
+  override def toString: String = s"Cup($label, next=${next.label})"
 }
 
 case object Cup {
@@ -149,15 +149,15 @@ case object Cup {
     @tailrec
     def createCups0(cups: List[Int], prevCup: Cup, firstCup: Cup): Cup = {
       cups match {
-        case x :: xs => createCups0(xs, new Cup(x, Some(prevCup)), firstCup)
+        case x :: xs => createCups0(xs, Cup(x, prevCup), firstCup)
         case Nil =>
-          firstCup.next = Some(prevCup)
+          firstCup.next = prevCup
           prevCup
       }
     }
 
     val cupsReversed = cups.reverse
-    val firstCup = new Cup(cupsReversed.head, Option.empty)
+    val firstCup = Cup(cupsReversed.head, null)
     createCups0(cupsReversed.tail, firstCup, firstCup)
   }
 

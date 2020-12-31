@@ -25,7 +25,6 @@ class Day23Test extends AnyFlatSpec {
     }
   }
 
-
   behavior of "Part 2"
 
   it should "work for the example" in {
@@ -40,14 +39,14 @@ class Day23Test extends AnyFlatSpec {
   it should "create a loop" in {
     assertResult(2) {
       val cups = Cup.createCups(List(1, 2, 3))
-      cups.next.get.next.get.next.get.next.get.label
+      cups.next.next.next.next.label
     }
   }
 
   it should "work for a big list" in {
     assertResult(5) {
       val cups = Cup.createCupsPadded(List(1, 2, 3), 100000)
-      cups.next.get.next.get.next.get.next.get.label
+      cups.next.next.next.next.label
     }
   }
 
@@ -57,7 +56,7 @@ class Day23Test extends AnyFlatSpec {
     assertResult(12345 ) {
       val cupRing = Cup.createCupsPadded(List(1, 2, 3), 100000)
       val cups = Cups(cupRing)
-      cups.lookup(12344).next.get.label
+      cups.lookup(12344).next.label
     }
   }
 
@@ -66,12 +65,12 @@ class Day23Test extends AnyFlatSpec {
     cups.move()
 
     assertResult(5)(cups.current.label)
-    assertResult(6)(cups.current.next.get.label)
-    assertResult(2)(cups.current.next.get.next.get.label)
-    assertResult(3)(cups.current.next.get.next.get.next.get.label)
-    assertResult(4)(cups.current.next.get.next.get.next.get.next.get.label)
-    assertResult(1)(cups.current.next.get.next.get.next.get.next.get.next.get.label)
-    assertResult(5)(cups.current.next.get.next.get.next.get.next.get.next.get.next.get.label)
+    assertResult(6)(cups.current.next.label)
+    assertResult(2)(cups.current.next.next.label)
+    assertResult(3)(cups.current.next.next.next.label)
+    assertResult(4)(cups.current.next.next.next.next.label)
+    assertResult(1)(cups.current.next.next.next.next.next.label)
+    assertResult(5)(cups.current.next.next.next.next.next.next.label)
   }
 
   it should "do a second move" in {
@@ -80,11 +79,11 @@ class Day23Test extends AnyFlatSpec {
     cups.move()
 
     assertResult(4)(cups.current.label)
-    assertResult(6)(cups.current.next.get.label)
-    assertResult(2)(cups.current.next.get.next.get.label)
-    assertResult(3)(cups.current.next.get.next.get.next.get.label)
-    assertResult(1)(cups.current.next.get.next.get.next.get.next.get.label)
-    assertResult(5)(cups.current.next.get.next.get.next.get.next.get.next.get.label)
-    assertResult(4)(cups.current.next.get.next.get.next.get.next.get.next.get.next.get.label)
+    assertResult(6)(cups.current.next.label)
+    assertResult(2)(cups.current.next.next.label)
+    assertResult(3)(cups.current.next.next.next.label)
+    assertResult(1)(cups.current.next.next.next.next.label)
+    assertResult(5)(cups.current.next.next.next.next.next.label)
+    assertResult(4)(cups.current.next.next.next.next.next.next.label)
   }
 }
