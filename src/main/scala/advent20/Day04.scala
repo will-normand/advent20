@@ -74,7 +74,7 @@ object Day04 extends App {
     var currentPassport = new ListBuffer[String]()
 
     for (line <- lines) {
-      if (line.isBlank) {
+      if (line.isEmpty) {
         passportVals += currentPassport.toList
         currentPassport = new ListBuffer[String]()
       } else {
