@@ -25,4 +25,3 @@ class Day25Test extends AnyFlatSpec {
     }
   }
 }
-

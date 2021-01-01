@@ -4,7 +4,6 @@ import advent20.utils.InputFileReader
 
 import scala.annotation.tailrec
 
-
 /**
  * 🎄
  */

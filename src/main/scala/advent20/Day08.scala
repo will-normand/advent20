@@ -10,7 +10,7 @@ object Day08 extends App {
   val instructions = lines map OpCode.fromString
   instructions map println
 
-  val _, result1 = new Interpreter(instructions).run
+  val (_, result1) = new Interpreter(instructions).run
   println("Answer (part 1) " + result1)
 
   val result2 = tryPrograms(instructions)
