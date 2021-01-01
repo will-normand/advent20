@@ -16,6 +16,10 @@ object Day14 extends App {
   val answer = memory.values.sum
   println("Answer (part 1) " + answer)
 
+  val memory2 = runInstructionsV2(groups)
+  val answer2 = memory2.values.sum
+  println("Answer (part 2) " + answer2)
+
   def runInstructions(groups: List[InstructionGroup]): Map[Long, Long] = {
     val memory = mutable.Map[Long, Long]()
     groups.foreach(group =>
@@ -25,6 +29,41 @@ object Day14 extends App {
         memory.put(instruction.index, valueAfterZerosMask)
       }))
     memory.toMap
+  }
+
+  def runInstructionsV2(groups: List[InstructionGroup]): Map[Long, Long] = {
+    val memory = mutable.Map[Long, Long]()
+    groups.foreach(group => {
+      group.instructions.foreach(instruction => {
+        val memoryLocations = applyMask(instruction.index, group.mask)
+        memoryLocations.foreach(memory.put(_, instruction.value))
+      })
+    })
+
+    memory.toMap
+  }
+
+  def applyMask(address: Long, mask: String): List[Long] = {
+    def branchList(addresses: List[String]): List[String] = {
+      val withZeros = addresses.map(_.concat("0"))
+      val withOnes = addresses.map(_.concat("1"))
+      withZeros ++ withOnes
+    }
+
+    @tailrec
+    def applyMask0(address: List[Char], mask: List[Char], addresses: List[String]): List[String] = {
+      mask match {
+        case '0' :: bits => applyMask0(address.tail, bits, addresses.map(_.concat(address.head.toString)))
+        case '1' :: bits => applyMask0(address.tail, bits, addresses.map(_.concat("1")))
+        case 'X' :: bits => applyMask0(address.tail, bits, branchList(addresses))
+        case _ => addresses
+      }
+    }
+
+    val addressChars: List[Char] = address.toBinaryString.toList.reverse.padTo(36, '0').reverse
+    applyMask0(addressChars, mask.toList, List("")) map {
+      java.lang.Long.parseLong(_, 2)
+    }
   }
 
   def parseLines(lines: List[String]): List[InstructionGroup] = {
@@ -41,19 +80,6 @@ object Day14 extends App {
     }
 
     parseLines0(lines.reverse, List.empty, List.empty)
-  }
-
-  def parseGroup(lines: List[String]) = {
-    val maskString = lines.head match {
-      case maskRegex(mask) => mask
-    }
-    val instructions = for (line <- lines.tail) yield {
-      line match {
-        case instructionRegex(index, value) => Instruction(index.toInt, value.toInt)
-      }
-    }
-
-    InstructionGroup(maskString, instructions)
   }
 }
 
